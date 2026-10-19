@@ -1,0 +1,64 @@
+:root {
+  --paper: #fbf7f0;
+  --ink: #1d1a16;
+  --muted: #6b645a;
+  --line: #e6dfd2;
+  --card: #fffdf9;
+  --accent: #d98e04;
+  --font-serif: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --gutter: clamp(1rem, 4vw, 2rem);
+  --max: 72rem;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #14110d;
+    --ink: #f3ece0;
+    --muted: #a39a8b;
+    --line: #2c261e;
+    --card: #1b1712;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  transition: background-color 0.4s;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+.wrap {
+  width: min(100% - 2 * var(--gutter), var(--max));
+  margin-inline: auto;
+}
+
+.eyebrow {
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}

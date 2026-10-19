@@ -1,0 +1,98 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import AppShowcase from '../components/AppShowcase.svelte';
+import HeroIcons from '../components/HeroIcons.svelte';
+
+const apps = (await getCollection('apps'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((a) => ({ slug: a.id, ...a.data }));
+
+const principles = [
+  ['Focused', 'Each app does one job and does it well.'],
+  ['Private', 'Your data is yours. We build with that as the default.'],
+  ['Fast', 'Quick to open, quick to use, out of your way.'],
+];
+---
+
+<Base>
+  <main>
+    <section class="wrap hero">
+      <p class="eyebrow">Plan To Live LLC</p>
+      <h1>Small apps for a<br />well-planned life.</h1>
+      <p class="lede">
+        We make focused tools that help people organize their days, meals, and belongings, so
+        there's more room left for living.
+      </p>
+      <a class="cta" href="#apps">See our apps</a>
+      <HeroIcons client:load apps={apps} />
+    </section>
+
+    <AppShowcase client:load apps={apps} />
+
+    <section class="wrap principles" id="about">
+      <p class="eyebrow">How we build</p>
+      <ul>
+        {principles.map(([title, body]) => (
+          <li>
+            <h3>{title}</h3>
+            <p>{body}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="wrap contact">
+      <h2>Say hello.</h2>
+      <p><a href="mailto:hello@plantolive.app">hello@plantolive.app</a></p>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .hero {
+    padding-block: clamp(4rem, 12vw, 9rem);
+  }
+  h1 {
+    font-size: clamp(2.75rem, 8vw, 6rem);
+    margin-top: 1rem;
+  }
+  .lede {
+    max-width: 38rem;
+    margin: 1.5rem 0 2rem;
+    font-size: 1.2rem;
+    color: var(--muted);
+  }
+  .cta {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    border-radius: 999px;
+    background: var(--ink);
+    color: var(--paper);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .principles {
+    padding-top: 5rem;
+  }
+  .principles ul {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0 0;
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  }
+  .principles h3 {
+    font-size: 1.5rem;
+  }
+  .principles p {
+    color: var(--muted);
+  }
+  .contact {
+    padding-top: 5rem;
+  }
+  .contact h2 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+  }
+</style>

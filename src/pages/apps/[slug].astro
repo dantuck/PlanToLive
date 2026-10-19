@@ -1,0 +1,76 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Phone from '../../components/Phone.svelte';
+
+export async function getStaticPaths() {
+  const apps = await getCollection('apps');
+  return apps.map((app) => ({ params: { slug: app.id }, props: { app } }));
+}
+
+const { app } = Astro.props;
+const { Content } = await render(app);
+const { name, tagline, accent, links } = app.data;
+---
+
+<Base title={`${name} · Plan To Live`} description={tagline}>
+  <main class="wrap app" style={`--accent:${accent}`}>
+    <a href="/#apps" class="back">← All apps</a>
+    <span class="icon" aria-hidden="true">{name[0]}</span>
+    <h1>{name}</h1>
+    <p class="tagline">{tagline}</p>
+    <div class="body"><Content /></div>
+    <div class="mock"><Phone name={name} accent={accent} /></div>
+    <p class="links">
+      {links.ios && <a href={links.ios}>App Store</a>}
+      {links.android && <a href={links.android}>Google Play</a>}
+      {links.web && <a href={links.web}>Open on web</a>}
+    </p>
+  </main>
+</Base>
+
+<style>
+  .app {
+    padding-block: 3rem;
+    max-width: 44rem;
+  }
+  .back {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .icon {
+    display: grid;
+    place-items: center;
+    width: 4.5rem;
+    height: 4.5rem;
+    margin: 2rem 0 1.25rem;
+    border-radius: 1.2rem;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--font-serif);
+    font-size: 2.2rem;
+  }
+  h1 {
+    font-size: clamp(2.5rem, 7vw, 4.5rem);
+  }
+  .tagline {
+    font-size: 1.3rem;
+    color: var(--muted);
+  }
+  .mock {
+    margin: 2.5rem 0;
+  }
+  .links {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .links a {
+    padding: 0.7rem 1.3rem;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+  }
+</style>
