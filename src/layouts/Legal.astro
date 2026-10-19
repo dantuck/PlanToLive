@@ -1,0 +1,43 @@
+---
+import Base from './Base.astro';
+
+interface Props {
+  title: string;
+  updated: string;
+}
+
+const { title, updated } = Astro.props;
+---
+
+<Base title={`${title} · Plan To Live`}>
+  <main class="wrap legal">
+    <h1>{title}</h1>
+    <p class="updated">Last updated {updated}</p>
+    <slot />
+  </main>
+</Base>
+
+<style>
+  .legal {
+    max-width: 44rem;
+    padding-block: 3rem;
+  }
+  h1 {
+    font-size: clamp(2.5rem, 7vw, 4rem);
+  }
+  .updated {
+    color: var(--muted);
+    margin-bottom: 2.5rem;
+  }
+  .legal :global(h2) {
+    font-size: 1.5rem;
+    margin: 2.5rem 0 0.75rem;
+  }
+  .legal :global(p),
+  .legal :global(li) {
+    color: var(--muted);
+  }
+  .legal :global(a) {
+    color: var(--ink);
+  }
+</style>
