@@ -1,0 +1,17 @@
+name: Lantern
+tagline: A private dashboard for your household.
+description: >-
+  A shared calendar and meal plan, chores with points and rewards, screen time
+  timers, and shared lists, all on one screen for the whole household. Install
+  it as an app or leave it up on a kitchen tablet.
+accent: '#c2570a'
+order: 1
+status: open-source
+statusNote: Free and self-hosted. You run it in your own Cloudflare account, and no one else sees your data.
+icon: /apps/lantern-icon.svg
+links:
+  - label: View on GitHub
+    href: https://github.com/dantuck/lantern
+    primary: true
+  - label: Setup guide
+    href: https://github.com/dantuck/lantern/blob/main/docs/setup-guide.md

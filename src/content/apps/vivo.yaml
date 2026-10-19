@@ -1,0 +1,20 @@
+name: vivo
+tagline: Encrypted backups. Synced everywhere.
+description: >-
+  A command-line wrapper around restic that runs your backups, checks them, and
+  syncs them to multiple remotes such as S3 and Backblaze B2. Credentials stay
+  encrypted at rest with SOPS and age.
+accent: '#10b981'
+accentFg: '#04231a'
+order: 4
+status: open-source
+statusNote: Free and open source under Apache-2.0 or MIT. Install with cargo or a one-line script.
+icon: /apps/vivo-icon.webp
+links:
+  - label: Get started
+    href: https://vivo.plantolive.app
+    primary: true
+  - label: GitHub
+    href: https://github.com/dantuck/vivo
+  - label: crates.io
+    href: https://crates.io/crates/vivo

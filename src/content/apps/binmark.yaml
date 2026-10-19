@@ -1,0 +1,16 @@
+name: Binmark
+tagline: Stop digging through boxes. Start finding things.
+description: >-
+  Print a QR label for every storage bin, list what's inside, and search across
+  everything you own. Share your bins with family or roommates so everyone can
+  find things and put them back.
+accent: '#16a34a'
+order: 3
+status: preview
+statusNote: In internal testing on Android and not yet publicly available.
+icon: /apps/binmark-icon.webp
+screenshot: /apps/binmark-shot.webp
+screenshotAlt: A Binmark bin page with a QR label and a list of items
+links:
+  - label: Learn more
+    href: https://binmark.plantolive.app

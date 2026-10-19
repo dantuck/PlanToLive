@@ -1,0 +1,20 @@
+name: MealQ
+tagline: Meal planning for the whole household.
+description: >-
+  Plan meals together on a shared calendar, build shopping lists sorted by store
+  section, and import recipes from a link. It works offline and syncs when you
+  reconnect.
+accent: '#ff8c00'
+accentFg: '#1a1100'
+order: 2
+status: available
+statusNote: Available on Android. iPhone and iPad are coming soon.
+icon: /apps/mealq-icon.webp
+screenshot: /apps/mealq-shot.webp
+screenshotAlt: The MealQ meal planner showing a week of dinners
+links:
+  - label: Get it on Google Play
+    href: https://play.google.com/store/apps/details?id=com.plantolive.mealq
+    primary: true
+  - label: Visit the site
+    href: https://mealq.plantolive.app
