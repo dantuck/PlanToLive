@@ -8,10 +8,10 @@ import { CONTACT_EMAIL, SITE_NAME } from '../site';
 
 const apps = (await getCollection('apps')).sort((a, b) => a.data.order - b.data.order);
 
-// Hero phones (and their glow) come from the first two apps that have a screenshot.
+// Hero phones (and their glow) come from the first three apps that have a screenshot.
 const fan = apps
   .flatMap((a) => (a.data.screenshot ? [{ src: a.data.screenshot, accent: a.data.accent }] : []))
-  .slice(0, 2);
+  .slice(0, 3);
 
 const principles = [
   {
@@ -141,7 +141,10 @@ const principles = [
   }
   .fan > div {
     position: relative;
-    width: min(12rem, 38vw);
+    width: min(12rem, 30vw);
+  }
+  .fan > div + div {
+    margin-left: -2.5rem;
   }
   .fan > div::before {
     content: '';
@@ -150,11 +153,15 @@ const principles = [
     z-index: -1;
     background: radial-gradient(closest-side, color-mix(in srgb, var(--c) 28%, transparent), transparent);
   }
+  .fan > div:not(:first-child):not(:last-child) {
+    z-index: 1;
+    transform: translateY(-0.5rem);
+  }
   .fan > div:first-child {
-    transform: translate(1.25rem, 1.5rem) rotate(-7deg);
+    transform: translate(0.5rem, 1.5rem) rotate(-7deg);
   }
   .fan > div:last-child {
-    transform: translate(-1.25rem, 0) rotate(6deg);
+    transform: translate(-0.5rem, 1.5rem) rotate(7deg);
   }
   .head {
     max-width: 40rem;
