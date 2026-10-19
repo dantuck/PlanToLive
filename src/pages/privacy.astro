@@ -1,10 +1,13 @@
 ---
 import Legal from '../layouts/Legal.astro';
+import { CONTACT_EMAIL, SITE_NAME, SITE_SHORT, appNames } from '../site';
+
+const names = await appNames();
 ---
 
-<Legal title="Privacy Policy" updated="October 18, 2026">
+<Legal title="Privacy Policy">
   <p>
-    Plan To Live LLC ("Plan To Live", "we", "us") makes apps including Lantern, MealQ, and BinMark.
+    {SITE_NAME} ("{SITE_SHORT}", "we", "us") makes apps including {names}.
     This policy covers this website. Each app may have its own privacy policy that covers the data
     that app handles.
   </p>
@@ -27,10 +30,11 @@ import Legal from '../layouts/Legal.astro';
   </ul>
   <p>We do not sell your personal information.</p>
 
-  <h2>Fonts</h2>
+  <h2>Fonts and theme</h2>
   <p>
-    This site loads fonts from Google Fonts, which means your browser requests them from Google's
-    servers and Google may receive your IP address.
+    This site uses the fonts already on your device, so nothing is loaded from third-party font
+    services. If you choose a light or dark theme, that choice is saved in your browser's local
+    storage and is never sent to us.
   </p>
 
   <h2>Your choices</h2>
@@ -41,6 +45,6 @@ import Legal from '../layouts/Legal.astro';
 
   <h2>Contact</h2>
   <p>
-    Plan To Live LLC · <a href="mailto:hello@plantolive.app">hello@plantolive.app</a>
+    {SITE_NAME} · <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
   </p>
 </Legal>

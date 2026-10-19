@@ -1,41 +1,43 @@
 ---
 import Base from './Base.astro';
+import { LEGAL_UPDATED, SITE_SHORT } from '../site';
 
 interface Props {
   title: string;
-  updated: string;
 }
 
-const { title, updated } = Astro.props;
+const { title } = Astro.props;
 ---
 
-<Base title={`${title} · Plan To Live`}>
-  <main class="wrap legal">
+<Base title={`${title} · ${SITE_SHORT}`}>
+  <main id="main" class="legal">
     <h1>{title}</h1>
-    <p class="updated">Last updated {updated}</p>
+    <p class="updated">Last updated {LEGAL_UPDATED}</p>
     <slot />
   </main>
 </Base>
 
 <style>
   .legal {
-    max-width: 44rem;
-    padding-block: 3rem;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 3rem var(--gutter) 0;
   }
   h1 {
-    font-size: clamp(2.5rem, 7vw, 4rem);
+    font-size: 2rem;
   }
   .updated {
+    margin-bottom: 2rem;
     color: var(--muted);
-    margin-bottom: 2.5rem;
   }
   .legal :global(h2) {
-    font-size: 1.5rem;
-    margin: 2.5rem 0 0.75rem;
+    margin: 2.25rem 0 0.5rem;
+    font-size: 1.2rem;
+    letter-spacing: -0.01em;
   }
   .legal :global(p),
   .legal :global(li) {
-    color: var(--muted);
+    margin-top: 0.75rem;
   }
   .legal :global(a) {
     color: var(--ink);
