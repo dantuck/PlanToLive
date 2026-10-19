@@ -1,26 +1,49 @@
+import { readdirSync, readFileSync } from 'node:fs';
 import sharp from 'sharp';
+import { parse } from 'yaml';
 
-const apps = [
-  ['L', '#d98e04'],
-  ['M', '#2f8f5b'],
-  ['B', '#3b6fd4'],
-];
+const SIZE = 104;
+const GAP = 26;
 
-const icons = apps
-  .map(
-    ([c, fill], i) => `
-  <rect x="${80 + i * 130}" y="440" width="104" height="104" rx="28" fill="${fill}"/>
-  <text x="${132 + i * 130}" y="512" text-anchor="middle" font-family="Georgia,serif" font-size="56" fill="#fff">${c}</text>`,
-  )
-  .join('');
+// App icons come from the content collection so a new app shows up here automatically.
+const apps = readdirSync('src/content/apps')
+  .filter((f) => f.endsWith('.yaml'))
+  .map((f) => parse(readFileSync(`src/content/apps/${f}`, 'utf8')))
+  .sort((a, b) => a.order - b.order);
 
-const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
-  <rect width="1200" height="630" fill="#fbf7f0"/>
-  <text x="80" y="120" font-family="Helvetica,Arial,sans-serif" font-size="26" letter-spacing="4" fill="#6b645a">PLAN TO LIVE LLC</text>
-  <text x="80" y="260" font-family="Georgia,serif" font-size="96" font-weight="600" fill="#1d1a16">Small apps for a</text>
-  <text x="80" y="370" font-family="Georgia,serif" font-size="96" font-weight="600" fill="#1d1a16">well-planned life.</text>
-  ${icons}
+// Gradient and surface colors mirror the theme in src/styles/global.css and src/pages/index.astro.
+const base = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#ff7a1a"/>
+      <stop offset="0.45" stop-color="#ffb02e"/>
+      <stop offset="1" stop-color="#22c55e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#252c36"/>
+  <text x="80" y="120" font-family="Helvetica,Arial,sans-serif" font-size="24" font-weight="600" letter-spacing="3" fill="#a3adbb">PLAN TO LIVE LLC</text>
+  <text x="80" y="250" font-family="Helvetica,Arial,sans-serif" font-size="92" font-weight="800" letter-spacing="-3" fill="#f1f3f5">Small apps for a</text>
+  <text x="80" y="355" font-family="Helvetica,Arial,sans-serif" font-size="92" font-weight="800" letter-spacing="-3" fill="url(#g)">well-planned life.</text>
 </svg>`;
 
-await sharp(Buffer.from(svg)).png().toFile('public/og.png');
-console.log('wrote public/og.png');
+const mask = Buffer.from(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="${SIZE}" height="${SIZE}"><rect width="${SIZE}" height="${SIZE}" rx="26"/></svg>`,
+);
+
+const tiles = await Promise.all(
+  apps.map(async (app, i) => ({
+    input: await sharp(`public${app.icon}`, { density: 150 })
+      .resize(SIZE, SIZE, { fit: 'cover' })
+      .composite([{ input: mask, blend: 'dest-in' }])
+      .png()
+      .toBuffer(),
+    left: 80 + i * (SIZE + GAP),
+    top: 450,
+  })),
+);
+
+await Promise.all([
+  sharp(Buffer.from(base)).composite(tiles).png({ palette: true, compressionLevel: 9 }).toFile('public/og.png'),
+  sharp('public/favicon.svg', { density: 600 }).resize(180, 180).png().toFile('public/apple-touch-icon.png'),
+]);
+console.log(`wrote public/og.png (${apps.length} apps) and public/apple-touch-icon.png`);
