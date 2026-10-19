@@ -1,98 +1,231 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import AppShowcase from '../components/AppShowcase.svelte';
-import HeroIcons from '../components/HeroIcons.svelte';
+import AppCard from '../components/AppCard.astro';
+import Device from '../components/Device.astro';
+import Icon from '../components/Icon.astro';
+import { CONTACT_EMAIL, SITE_NAME } from '../site';
 
-const apps = (await getCollection('apps'))
-  .sort((a, b) => a.data.order - b.data.order)
-  .map((a) => ({ slug: a.id, ...a.data }));
+const apps = (await getCollection('apps')).sort((a, b) => a.data.order - b.data.order);
+
+// Hero phones (and their glow) come from the first two apps that have a screenshot.
+const fan = apps
+  .flatMap((a) => (a.data.screenshot ? [{ src: a.data.screenshot, accent: a.data.accent }] : []))
+  .slice(0, 2);
 
 const principles = [
-  ['Focused', 'Each app does one job and does it well.'],
-  ['Private', 'Your data is yours. We build with that as the default.'],
-  ['Fast', 'Quick to open, quick to use, out of your way.'],
-];
+  {
+    icon: 'users',
+    title: 'Built for households',
+    body: 'Shared plans, lists, and bins, made for people who share a home.',
+  },
+  {
+    icon: 'lock',
+    title: 'Private by default',
+    body: "No ads and no selling your data. Lantern doesn't phone home at all.",
+  },
+  {
+    icon: 'drive',
+    title: 'Your data, your call',
+    body: 'Export or delete your data, or host Lantern yourself and keep it entirely your own.',
+  },
+] as const;
 ---
 
 <Base>
-  <main>
+  <main id="main">
     <section class="wrap hero">
-      <p class="eyebrow">Plan To Live LLC</p>
-      <h1>Small apps for a<br />well-planned life.</h1>
+      <p class="eyebrow">{SITE_NAME}</p>
+      <h1>Small apps for a <span class="grad">well-planned</span> life.</h1>
       <p class="lede">
-        We make focused tools that help people organize their days, meals, and belongings, so
-        there's more room left for living.
+        We make focused tools that help people organize their days, meals, and belongings, and
+        back up what matters, so there's more room left for living.
       </p>
-      <a class="cta" href="#apps">See our apps</a>
-      <HeroIcons client:load apps={apps} />
+      <p class="cta-row">
+        <a class="btn btn-primary" href="#apps">See our apps</a>
+        <a class="btn" href={`mailto:${CONTACT_EMAIL}`}>Say hello</a>
+      </p>
+
+      <div class="fan" aria-hidden="true">
+        {fan.map((p) => (
+          <div style={`--c:${p.accent}`}>
+            <Device src={p.src} alt="" />
+          </div>
+        ))}
+      </div>
     </section>
 
-    <AppShowcase client:load apps={apps} />
+    <section class="wrap apps" id="apps">
+      <div class="head">
+        <p class="eyebrow">The apps</p>
+        <h2>Apps for the home and the terminal.</h2>
+        <p class="lede">Each one does a single job well.</p>
+      </div>
+      <div class="cards">
+        {apps.map((a) => <AppCard slug={a.id} app={a.data} />)}
+      </div>
+    </section>
 
-    <section class="wrap principles" id="about">
-      <p class="eyebrow">How we build</p>
-      <ul>
-        {principles.map(([title, body]) => (
-          <li>
-            <h3>{title}</h3>
-            <p>{body}</p>
-          </li>
-        ))}
+    <section class="wrap about" id="about">
+      <div class="head">
+        <p class="eyebrow">How we build</p>
+        <h2>Calm, careful software.</h2>
+      </div>
+      <ul class="grid">
+        {
+          principles.map((p) => (
+            <li>
+              <span class="badge"><Icon name={p.icon} /></span>
+              <h3>{p.title}</h3>
+              <p>{p.body}</p>
+            </li>
+          ))
+        }
       </ul>
     </section>
 
     <section class="wrap contact">
-      <h2>Say hello.</h2>
-      <p><a href="mailto:hello@plantolive.app">hello@plantolive.app</a></p>
+      <div class="box">
+        <h2>Say hello.</h2>
+        <p>Questions, feedback, or just curious? We read everything.</p>
+        <p>
+          <a class="btn btn-primary" href={`mailto:${CONTACT_EMAIL}`}>
+            <Icon name="mail" size={18} /> {CONTACT_EMAIL}
+          </a>
+        </p>
+      </div>
     </section>
   </main>
 </Base>
 
 <style>
   .hero {
-    padding-block: clamp(4rem, 12vw, 9rem);
+    padding-top: clamp(3.5rem, 9vw, 6.5rem);
+    text-align: center;
   }
   h1 {
-    font-size: clamp(2.75rem, 8vw, 6rem);
-    margin-top: 1rem;
+    max-width: 18ch;
+    margin: 1rem auto 0;
+    font-size: clamp(2.5rem, 7.5vw, 4.75rem);
+    text-wrap: balance;
+  }
+  .grad {
+    white-space: nowrap;
+    /* Keep in sync with the gradient in scripts/og.mjs */
+    background: linear-gradient(90deg, #ff7a1a, #ffb02e 45%, #22c55e);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   .lede {
     max-width: 38rem;
-    margin: 1.5rem 0 2rem;
-    font-size: 1.2rem;
+    margin: 1.25rem auto 0;
     color: var(--muted);
+    font-size: 1.15rem;
   }
-  .cta {
-    display: inline-block;
-    padding: 0.8rem 1.5rem;
-    border-radius: 999px;
-    background: var(--ink);
-    color: var(--paper);
-    text-decoration: none;
-    font-weight: 500;
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 2rem;
   }
-  .principles {
-    padding-top: 5rem;
+  .fan {
+    position: relative;
+    isolation: isolate;
+    overflow-x: clip;
+    display: flex;
+    justify-content: center;
+    margin-top: 3.5rem;
+    padding-bottom: 3rem;
   }
-  .principles ul {
-    list-style: none;
-    padding: 0;
-    margin: 1.5rem 0 0;
+  .fan > div {
+    position: relative;
+    width: min(12rem, 38vw);
+  }
+  .fan > div::before {
+    content: '';
+    position: absolute;
+    inset: -25% -60%;
+    z-index: -1;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--c) 28%, transparent), transparent);
+  }
+  .fan > div:first-child {
+    transform: translate(1.25rem, 1.5rem) rotate(-7deg);
+  }
+  .fan > div:last-child {
+    transform: translate(-1.25rem, 0) rotate(6deg);
+  }
+  .head {
+    max-width: 40rem;
+    margin: 0 auto 2.5rem;
+    text-align: center;
+  }
+  .head h2,
+  .box h2 {
+    font-size: clamp(2rem, 5vw, 3rem);
+  }
+  .head h2 {
+    margin-top: 0.6rem;
+  }
+  .apps {
+    padding-top: 3rem;
+  }
+  .cards {
     display: grid;
-    gap: 2rem;
-    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 1.5rem;
   }
-  .principles h3 {
-    font-size: 1.5rem;
-  }
-  .principles p {
-    color: var(--muted);
-  }
+  .about,
   .contact {
     padding-top: 5rem;
   }
-  .contact h2 {
-    font-size: clamp(2rem, 5vw, 3.5rem);
+  .grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 53.75rem) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .grid li {
+    padding: 1.75rem;
+    border-radius: var(--radius);
+    background: var(--bg-soft);
+  }
+  .badge {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-bottom: 1rem;
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--ink);
+  }
+  .grid h3 {
+    font-size: 1.15rem;
+    letter-spacing: -0.01em;
+  }
+  .grid p {
+    margin-top: 0.4rem;
+    color: var(--muted);
+  }
+  .box {
+    padding: clamp(2rem, 6vw, 4rem) 1.5rem;
+    border-radius: var(--radius);
+    background: var(--bg-soft);
+    text-align: center;
+  }
+  .box p {
+    margin-top: 0.75rem;
+    color: var(--muted);
+  }
+  .box p:last-child {
+    margin-top: 1.5rem;
   }
 </style>

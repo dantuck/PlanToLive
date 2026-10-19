@@ -1,0 +1,144 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Device from './Device.astro';
+
+interface Props {
+  slug: string;
+  app: CollectionEntry<'apps'>['data'];
+}
+
+const { slug, app } = Astro.props;
+
+const statusLabel = {
+  available: 'Available',
+  preview: 'In testing',
+  'open-source': 'Open source',
+} as const;
+---
+
+<article
+  class="card"
+  id={slug}
+  style={`--accent:${app.accent};--btn-fg:${app.accentFg}`}
+>
+  <div>
+    <img class="icon" src={app.icon} alt="" width="56" height="56" />
+    <p class="eyebrow status"><span class="dot"></span>{statusLabel[app.status]}</p>
+    <h3>{app.name}</h3>
+    <p class="tagline">{app.tagline}</p>
+    <p class="desc">{app.description}</p>
+    <p class="note">{app.statusNote}</p>
+    <p class="actions">
+      {
+        app.links.map((link) => (
+          <a class:list={['btn', { 'btn-primary': link.primary }]} href={link.href} rel="noopener">
+            {link.label}
+          </a>
+        ))
+      }
+    </p>
+  </div>
+  <div class="visual">
+    {
+      app.screenshot ? (
+        <div class="phone">
+          <Device src={app.screenshot} alt={app.screenshotAlt ?? ''} />
+        </div>
+      ) : (
+        <img class="mark" src={app.icon} alt="" width="128" height="128" />
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .card {
+    display: grid;
+    gap: 2rem;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-soft);
+  }
+  @media (min-width: 54rem) {
+    .card {
+      grid-template-columns: 1.1fr 1fr;
+      align-items: center;
+    }
+    .card:nth-of-type(even) .visual {
+      order: -1;
+    }
+  }
+  .icon {
+    display: block;
+    width: 3.5rem;
+    height: 3.5rem;
+    margin-bottom: 1.5rem;
+    border-radius: 14px;
+    object-fit: cover;
+    box-shadow: 0 0.5rem 1.25rem -0.5rem var(--accent);
+  }
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.6rem;
+  }
+  .dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  h3 {
+    font-size: clamp(2rem, 5vw, 2.75rem);
+  }
+  .tagline {
+    margin-top: 0.6rem;
+    color: var(--ink);
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .desc {
+    margin-top: 1rem;
+    max-width: 34rem;
+  }
+  .note {
+    margin-top: 0.75rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+  .visual {
+    display: grid;
+    place-items: center;
+    min-height: 18rem;
+    padding: 1.5rem 1rem 0;
+    border-radius: var(--radius);
+    background: radial-gradient(
+      60% 60% at 50% 45%,
+      color-mix(in srgb, var(--accent) 30%, transparent),
+      transparent 72%
+    );
+    overflow: hidden;
+  }
+  .phone {
+    width: min(14rem, 70%);
+    margin-bottom: -4rem;
+  }
+  .mark {
+    display: block;
+    width: 8rem;
+    height: 8rem;
+    margin-bottom: 1.5rem;
+    border-radius: 28px;
+    object-fit: cover;
+    box-shadow: 0 1.5rem 3rem -1rem var(--accent);
+  }
+</style>

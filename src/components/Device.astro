@@ -1,0 +1,30 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+}
+
+const { src, alt } = Astro.props;
+---
+
+<div class="device">
+  <img src={src} {alt} width="560" height="1217" loading="lazy" decoding="async" />
+</div>
+
+<style>
+  .device {
+    padding: 0.35rem;
+    border-radius: 2.25rem;
+    background: #111;
+    box-shadow: 0 1.5rem 3rem -1.25rem rgb(0 0 0 / 0.6);
+  }
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 9 / 19.5;
+    object-fit: cover;
+    object-position: top;
+    border-radius: 1.9rem;
+  }
+</style>

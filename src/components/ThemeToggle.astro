@@ -1,0 +1,49 @@
+---
+import Icon from './Icon.astro';
+
+const options = [
+  ['light', 'Light theme', 'sun'],
+  ['dark', 'Dark theme', 'moon'],
+  ['system', 'Match system theme', 'monitor'],
+] as const;
+---
+
+<div class="toggle" role="group" aria-label="Color theme">
+  {
+    options.map(([value, label, icon]) => (
+      <button type="button" data-theme-choice={value} aria-label={label} aria-pressed={value === 'system'}>
+        <Icon name={icon} size={16} />
+      </button>
+    ))
+  }
+</div>
+
+<style>
+  .toggle {
+    display: inline-flex;
+    gap: 0.15rem;
+    padding: 0.2rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-btn);
+    background: var(--bg-soft);
+  }
+  button {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    border-radius: calc(var(--radius-btn) - 4px);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  button[aria-pressed='true'] {
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
+  }
+  button:hover {
+    color: var(--ink);
+  }
+</style>

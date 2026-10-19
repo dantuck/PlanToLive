@@ -1,6 +1,7 @@
 ---
-import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import { CONTACT_EMAIL, SITE_NAME, SITE_SHORT } from '../site';
 
 interface Props {
   title?: string;
@@ -8,7 +9,7 @@ interface Props {
 }
 
 const {
-  title = 'Plan To Live',
+  title = SITE_SHORT,
   description = 'Small, focused apps for a well-planned life.',
 } = Astro.props;
 ---
@@ -21,68 +22,137 @@ const {
     <meta name="description" content={description} />
     <title>{title}</title>
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Plan To Live" />
+    <meta property="og:site_name" content={SITE_SHORT} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={new URL('/og.png', Astro.site)} />
     <meta name="twitter:card" content="summary_large_image" />
-    <ClientRouter />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap"
-    />
+    <script is:inline>
+      // Theme: applied before first paint; the header buttons are wired up by event delegation.
+      (function () {
+        var KEY = 'theme';
+        var root = document.documentElement;
+        function saved() {
+          try {
+            var t = localStorage.getItem(KEY);
+            return t === 'light' || t === 'dark' ? t : null;
+          } catch (e) {
+            return null;
+          }
+        }
+        function render() {
+          var t = saved();
+          if (t) root.dataset.theme = t;
+          else delete root.dataset.theme;
+          document.querySelectorAll('[data-theme-choice]').forEach(function (b) {
+            b.setAttribute('aria-pressed', String(b.dataset.themeChoice === (t || 'system')));
+          });
+        }
+        render();
+        document.addEventListener('DOMContentLoaded', render);
+        document.addEventListener('click', function (e) {
+          var b = e.target.closest && e.target.closest('[data-theme-choice]');
+          if (!b) return;
+          try {
+            if (b.dataset.themeChoice === 'system') localStorage.removeItem(KEY);
+            else localStorage.setItem(KEY, b.dataset.themeChoice);
+          } catch (err) {}
+          render();
+        });
+      })();
+    </script>
   </head>
   <body>
-    <header class="wrap site-head">
-      <a href="/" class="brand">Plan To Live</a>
-      <nav>
-        <a href="/#apps">Apps</a>
-        <a href="/#about">About</a>
-        <a href="mailto:hello@plantolive.app">Contact</a>
-      </nav>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site-head">
+      <div class="wrap bar">
+        <a href="/" class="brand">
+          <img src="/favicon.svg" alt="" width="32" height="32" />
+          <span>{SITE_SHORT}</span>
+        </a>
+        <nav aria-label="Main">
+          <a class="link" href="/#apps">Apps</a>
+          <a class="link" href="/#about">About</a>
+          <a class="btn btn-primary cta" href={`mailto:${CONTACT_EMAIL}`}>Contact</a>
+          <ThemeToggle />
+        </nav>
+      </div>
     </header>
     <slot />
     <footer class="wrap site-foot">
-      <span>© {new Date().getFullYear()} Plan To Live LLC</span>
+      <span>© {new Date().getFullYear()} {SITE_NAME}</span>
       <span><a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></span>
     </footer>
   </body>
 </html>
 
 <style>
-  .site-head,
-  .site-foot {
+  .site-head {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    border-bottom: 1px solid var(--border);
+    background: color-mix(in srgb, var(--bg) 95%, transparent);
+  }
+  .bar {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding-block: 1.5rem;
+    justify-content: space-between;
+    padding-block: 0.75rem;
   }
   .brand {
-    font-family: var(--font-serif);
-    font-weight: 600;
-    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    color: var(--ink);
+    font-weight: 700;
     text-decoration: none;
+  }
+  .brand img {
+    border-radius: 8px;
   }
   nav {
     display: flex;
-    gap: 1.5rem;
-    font-size: 0.95rem;
+    align-items: center;
+    gap: 1.25rem;
   }
-  nav a {
-    text-decoration: none;
+  .link {
     color: var(--muted);
+    text-decoration: none;
   }
-  nav a:hover {
+  .link:hover {
     color: var(--ink);
   }
+  .cta {
+    padding: 0.45rem 1.1rem;
+    font-size: 0.95rem;
+  }
+  @media (max-width: 32.5rem) {
+    .link {
+      display: none;
+    }
+    nav {
+      gap: 0.75rem;
+    }
+  }
   .site-foot {
-    border-top: 1px solid var(--line);
-    margin-top: 6rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 5rem;
+    padding-block: 2rem;
+    border-top: 1px solid var(--border);
     color: var(--muted);
-    font-size: 0.875rem;
+    font-size: 0.9rem;
+  }
+  .site-foot a {
+    text-decoration: none;
+  }
+  .site-foot a:hover {
+    color: var(--ink);
   }
 </style>
