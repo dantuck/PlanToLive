@@ -1,14 +1,11 @@
 {
   "name": "plantolive-www",
-  "main": "./worker/index.ts",
   "compatibility_date": "2026-10-01",
-  "assets": {
-    "directory": "./dist",
-    "binding": "ASSETS",
-    "run_worker_first": true
-  },
+  // Assets only: static files are served directly and no Worker code runs per request.
+  "assets": { "directory": "./dist" },
   "routes": [
     { "pattern": "plantolive.app", "custom_domain": true },
+    // Keeps a proxied DNS record for www. A zone Redirect Rule sends www to the apex before this is reached.
     { "pattern": "www.plantolive.app", "custom_domain": true }
   ]
 }
