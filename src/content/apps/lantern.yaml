@@ -9,9 +9,13 @@ order: 1
 status: open-source
 statusNote: Free and self-hosted. You run it in your own Cloudflare account, and no one else sees your data.
 icon: /apps/lantern-icon.svg
+screenshot: /apps/lantern-shot.webp
+screenshotAlt: Lantern's chores page with a household goal, family members, and chore filters
 links:
   - label: View on GitHub
     href: https://github.com/dantuck/lantern
     primary: true
+  - label: Try the demo
+    href: https://lantern.plantolive.app/demo
   - label: Setup guide
     href: https://github.com/dantuck/lantern/blob/main/docs/setup-guide.md
