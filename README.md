@@ -1,43 +1,79 @@
-# Astro Starter Kit: Minimal
+# plantolive.app
 
-```sh
-npm create astro@latest -- --template minimal
-```
+Marketing site for [Plan To Live LLC](https://plantolive.app), the small studio behind Lantern, mealQ, Binmark, and vivo. It's a static [Astro](https://astro.build) site deployed to Cloudflare as static assets, with no server code.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Requirements
 
-## 🚀 Project Structure
+- Node `>=22.22.0`
+- npm
 
-Inside of your Astro project, you'll see the following folders and files:
+## Commands
+
+Run from the project root:
+
+| Command           | Action                                       |
+| :---------------- | :------------------------------------------- |
+| `npm install`     | Install dependencies                         |
+| `npm run dev`     | Start the dev server at `localhost:4321`     |
+| `npm run build`   | Build the site to `./dist/`                  |
+| `npm run preview` | Preview the production build locally         |
+| `npm run astro …` | Run Astro CLI commands (e.g. `astro check`)  |
+
+## Project structure
 
 ```text
 /
-├── public/
+├── public/               Static files served as-is (favicon, og.png, _headers)
+├── scripts/og.mjs        Regenerates the Open Graph image from the app data
 ├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+│   ├── assets/apps/      App icons and screenshots
+│   ├── components/       AppCard, Device, Icon, ThemeToggle
+│   ├── content/apps/     One YAML file per app (the content collection)
+│   ├── layouts/          Base page shell and Legal page layout
+│   ├── pages/            index, privacy, terms, 404
+│   ├── styles/global.css Theme tokens and global styles
+│   ├── content.config.ts Schema for the apps collection
+│   └── site.ts           Company name, contact email, legal date
+├── astro.config.mjs
+└── wrangler.jsonc        Cloudflare deployment config
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Content
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+### Apps
 
-Any static assets, like images, can be placed in the `public/` directory.
+Each app on the homepage is a YAML file in `src/content/apps/`, validated by the schema in `src/content.config.ts`. To add an app, create a new file with:
 
-## 🧞 Commands
+- `name`, `tagline`, `description`
+- `accent` (and optional `accentFg`) as `#rrggbb` colors
+- `order`, which controls display order
+- `status`: `available`, `preview`, or `open-source`, plus a `statusNote`
+- `icon` and optional `screenshot` / `screenshotAlt`, as paths into `src/assets/apps/`
+- `links`, each with a `label`, an `href`, and an optional `primary` flag
 
-All commands are run from the root of the project, from a terminal:
+The homepage, app names in copy, and the OG image all read from this collection, so a new app shows up everywhere automatically.
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+### Site details and legal pages
 
-## 👀 Want to learn more?
+Company name, contact email, and the "last updated" date for the privacy policy and terms live in `src/site.ts`. Update `LEGAL_UPDATED` whenever `privacy.astro` or `terms.astro` changes.
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+### Open Graph image
+
+After changing app icons or the brand colors, regenerate `public/og.png`:
+
+```sh
+node scripts/og.mjs
+```
+
+## Deployment
+
+The site deploys to Cloudflare with [Wrangler](https://developers.cloudflare.com/workers/wrangler/). `wrangler.jsonc` serves `./dist` as static assets, with the 404 page for unknown routes, on `plantolive.app` and `www.plantolive.app`.
+
+```sh
+npm run build
+npx wrangler deploy
+```
+
+The `www` host is redirected to the apex by a zone Redirect Rule in Cloudflare. The route here only keeps a proxied DNS record for it.
+
+Internal links use trailing slashes (`trailingSlash: 'always'` in `astro.config.mjs`).
