@@ -9,16 +9,44 @@ interface Props {
 const { src, alt } = Astro.props;
 ---
 
+<div class="box">
 <div class="device">
   <Image src={src} {alt} widths={[240, 480]} sizes="(min-width: 54rem) 14rem, 60vw" loading="lazy" />
 </div>
+</div>
 
 <style>
+  /* Everything below is sized in cqw so the bezel, corners and buttons scale with the phone. */
+  .box {
+    container-type: inline-size;
+  }
   .device {
-    padding: 0.35rem;
-    border-radius: 2.25rem;
-    background: #111;
-    box-shadow: 0 1.5rem 3rem -1.25rem rgb(0 0 0 / 0.6);
+    position: relative;
+    padding: 3.4cqw;
+    border-radius: 12cqw;
+    background: linear-gradient(145deg, #3a3d42, #141517 45%, #26282c);
+    box-shadow:
+      inset 0 0 0 0.5cqw #4a4d53,
+      inset 0 0 0 1.1cqw #0b0b0c,
+      0 1.5rem 3rem -1.25rem rgb(0 0 0 / 0.6);
+  }
+  /* Volume rocker, above the power button. */
+  .device::before,
+  .device::after {
+    content: '';
+    position: absolute;
+    right: -0.9cqw;
+    width: 0.9cqw;
+    border-radius: 0 0.6cqw 0.6cqw 0;
+    background: linear-gradient(90deg, #1b1c1f, #4a4d53);
+  }
+  .device::before {
+    top: 17%;
+    height: 9%;
+  }
+  .device::after {
+    top: 30%;
+    height: 6%;
   }
   img {
     display: block;
@@ -27,6 +55,6 @@ const { src, alt } = Astro.props;
     aspect-ratio: 9 / 19.5;
     object-fit: cover;
     object-position: top;
-    border-radius: 1.9rem;
+    border-radius: 8.6cqw;
   }
 </style>
