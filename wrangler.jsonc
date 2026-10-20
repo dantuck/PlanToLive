@@ -2,7 +2,7 @@
   "name": "plantolive-www",
   "compatibility_date": "2026-10-01",
   // Assets only: static files are served directly and no Worker code runs per request.
-  "assets": { "directory": "./dist" },
+  "assets": { "directory": "./dist", "not_found_handling": "404-page" },
   "routes": [
     { "pattern": "plantolive.app", "custom_domain": true },
     // Keeps a proxied DNS record for www. A zone Redirect Rule sends www to the apex before this is reached.
