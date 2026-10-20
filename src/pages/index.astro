@@ -4,7 +4,7 @@ import Base from '../layouts/Base.astro';
 import AppCard from '../components/AppCard.astro';
 import Device from '../components/Device.astro';
 import Icon from '../components/Icon.astro';
-import { CONTACT_EMAIL, SITE_NAME } from '../site';
+import { CONTACT_EMAIL } from '../site';
 
 const apps = (await getCollection('apps')).sort((a, b) => a.data.order - b.data.order);
 
@@ -35,7 +35,7 @@ const principles = [
 <Base>
   <main id="main">
     <section class="wrap hero">
-      <p class="eyebrow">{SITE_NAME}</p>
+      <div class="copy">
       <h1>Small apps for a <span class="grad">well-planned</span> life.</h1>
       <p class="lede">
         We make focused tools that help people organize their days, meals, and belongings, and
@@ -45,6 +45,7 @@ const principles = [
         <a class="btn btn-primary" href="#apps">See our apps</a>
         <a class="btn" href={`mailto:${CONTACT_EMAIL}`}>Say hello</a>
       </p>
+      </div>
 
       <div class="fan" aria-hidden="true">
         {fan.map((p) => (
@@ -105,7 +106,7 @@ const principles = [
   }
   h1 {
     max-width: 18ch;
-    margin: 1rem auto 0;
+    margin: 0 auto;
     font-size: clamp(2.5rem, 7.5vw, 4.75rem);
     text-wrap: balance;
   }
@@ -133,6 +134,7 @@ const principles = [
     position: relative;
     isolation: isolate;
     overflow-x: clip;
+    pointer-events: none;
     display: flex;
     justify-content: center;
     margin-top: 3.5rem;
@@ -148,7 +150,7 @@ const principles = [
   .fan > div::before {
     content: '';
     position: absolute;
-    inset: -25% -60%;
+    inset: -25% -30%;
     z-index: -1;
     background: radial-gradient(closest-side, color-mix(in srgb, var(--c) 28%, transparent), transparent);
   }
@@ -161,6 +163,60 @@ const principles = [
   }
   .fan > div:last-child {
     transform: translate(-0.5rem, 1.5rem) rotate(7deg);
+  }
+  @media (min-width: 64rem) {
+    .hero {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      align-items: center;
+      gap: 3rem;
+      text-align: left;
+    }
+    h1 {
+      max-width: none;
+      margin: 0;
+      font-size: clamp(2.75rem, 4.6vw, 4.5rem);
+    }
+    .lede {
+      margin-left: 0;
+    }
+    .cta-row {
+      justify-content: flex-start;
+    }
+    .fan {
+      container-type: inline-size;
+      margin-top: 0;
+      padding-block: 2rem 3rem;
+    }
+    /* Size phones to the column so the rotated outer ones never get clipped. */
+    .fan > div {
+      width: min(13rem, 30cqw);
+    }
+    .fan > div + div {
+      margin-left: -2.5rem;
+    }
+  }
+  @media (min-width: 90rem) {
+    .lede {
+      max-width: 36rem;
+      font-size: 1.3rem;
+    }
+    .apps {
+      padding-top: 4rem;
+    }
+    .cards {
+      gap: 2rem;
+    }
+    .about,
+    .contact {
+      padding-top: 6.5rem;
+    }
+    .grid {
+      gap: 2rem;
+    }
+    .grid li {
+      padding: 2.25rem;
+    }
   }
   .head {
     max-width: 40rem;

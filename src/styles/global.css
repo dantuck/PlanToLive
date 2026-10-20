@@ -17,6 +17,13 @@
   --gutter: 1.25rem;
 }
 
+@media (min-width: 90rem) {
+  :root {
+    --max: 78rem;
+    --gutter: 2rem;
+  }
+}
+
 :root[data-theme='light'] {
   color-scheme: light;
 }

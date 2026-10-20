@@ -70,6 +70,22 @@ const statusLabel = {
       order: -1;
     }
   }
+  @media (min-width: 90rem) {
+    .card {
+      gap: 4rem;
+      padding: 3.5rem;
+    }
+    .visual {
+      min-height: 24rem;
+    }
+    .phone {
+      width: min(17rem, 70%);
+    }
+    .desc {
+      max-width: 38rem;
+      font-size: 1.1rem;
+    }
+  }
   .icon {
     display: block;
     width: 3.5rem;
@@ -120,7 +136,7 @@ const statusLabel = {
     display: grid;
     place-items: center;
     min-height: 18rem;
-    padding: 1.5rem 1rem 0;
+    padding: 2rem 1rem;
     border-radius: var(--radius);
     background: radial-gradient(
       60% 60% at 50% 45%,
@@ -131,13 +147,11 @@ const statusLabel = {
   }
   .phone {
     width: min(14rem, 70%);
-    margin-bottom: -4rem;
   }
   .mark {
     display: block;
     width: 8rem;
     height: 8rem;
-    margin-bottom: 1.5rem;
     border-radius: 28px;
     object-fit: cover;
     box-shadow: 0 1.5rem 3rem -1rem var(--accent);
