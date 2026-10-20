@@ -12,7 +12,7 @@ const apps = readdirSync('src/content/apps')
   .map((f) => parse(readFileSync(`src/content/apps/${f}`, 'utf8')))
   .sort((a, b) => a.order - b.order);
 
-// Gradient and surface colors mirror the theme in src/styles/global.css and src/pages/index.astro.
+// Gradient and surface colors mirror the theme in src/styles/global.css (--brand-gradient).
 const base = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
   <defs>
     <linearGradient id="g" x1="0" x2="1" y1="0" y2="0">

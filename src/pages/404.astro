@@ -1,32 +1,203 @@
 ---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
+
+const apps = (await getCollection('apps')).sort((a, b) => a.data.order - b.data.order);
+
+// Where each app hides in the dark: [left %, top %, tilt deg].
+const spots = [
+  [12, 22, -10],
+  [84, 18, 8],
+  [20, 76, 7],
+  [80, 72, -8],
+];
+
+if (apps.length > spots.length) throw new Error('404.astro: add a hiding spot for each new app');
 ---
 
 <Base title="Page not found · Plan To Live">
   <main id="main" class="wrap lost">
-    <p class="eyebrow">404</p>
-    <h1>That page isn't here.</h1>
-    <p class="lede">The link may be old or mistyped. The apps are all on the home page.</p>
-    <p><a class="btn btn-primary" href="/">Back to home</a></p>
+    <div class="stage">
+      <ul class="hidden" aria-label="Our apps">
+        {
+          apps.map((a, i) => {
+            const [x, y, r] = spots[i];
+            return (
+              <li style={`left:${x}%;top:${y}%;--r:${r}deg;--c:${a.data.accent}`}>
+                <a href={`/#${a.id}`} aria-label={a.data.name}>
+                  <Image src={a.data.icon} alt="" width={128} height={128} />
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+
+      <div class="copy">
+        <p class="num" aria-hidden="true">404</p>
+        <h1>Who turned out the lights?</h1>
+        <p class="lede">
+          This page isn't here. Move the light around, and you might spot our apps hiding in the
+          dark.
+        </p>
+        <p class="cta-row">
+          <a class="btn btn-primary" href="/">Back to home</a>
+          <a class="btn" href="/#apps">See our apps</a>
+        </p>
+      </div>
+    </div>
   </main>
 </Base>
 
+<script>
+  // A lantern follows the pointer (or drifts on its own until one is used) and reveals the apps.
+  const stage = document.querySelector<HTMLElement>('.stage');
+  if (stage && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    stage.dataset.live = '';
+    const move = (x: string, y: string) => {
+      stage.style.setProperty('--x', x);
+      stage.style.setProperty('--y', y);
+    };
+
+    // Drift in percentages so no layout reads are needed, and only while the stage is on screen.
+    let touched = false;
+    let frame = 0;
+    const drift = (t: number) => {
+      move(`${50 + 34 * Math.sin(t / 1700)}%`, `${50 + 30 * Math.sin(t / 1100 + 1)}%`);
+      frame = requestAnimationFrame(drift);
+    };
+    new IntersectionObserver(([entry]) => {
+      cancelAnimationFrame(frame);
+      if (entry.isIntersecting && !touched) frame = requestAnimationFrame(drift);
+    }).observe(stage);
+
+    // Pointer events can outpace frames, so apply at most one update per frame.
+    let x = 0;
+    let y = 0;
+    let queued = false;
+    const follow = (e: PointerEvent) => {
+      touched = true;
+      cancelAnimationFrame(frame);
+      x = e.clientX;
+      y = e.clientY;
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => {
+        queued = false;
+        const r = stage.getBoundingClientRect();
+        move(`${x - r.left}px`, `${y - r.top}px`);
+      });
+    };
+    stage.addEventListener('pointerdown', follow, { passive: true });
+    stage.addEventListener('pointermove', follow, { passive: true });
+  }
+</script>
+
 <style>
   .lost {
-    padding-top: clamp(4rem, 12vw, 8rem);
+    padding-top: clamp(2rem, 6vw, 4rem);
+  }
+  /* The stage is always dark, whatever the site theme, so the light has something to cut through.
+     color-scheme: dark makes the light-dark() tokens resolve to their dark values in here. */
+  .stage {
+    --x: 50%;
+    --y: 50%;
+    --bg: #1a1f27;
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    place-items: center;
+    min-height: min(34rem, 80svh);
+    padding: 3rem 1.5rem;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--ink);
+    color-scheme: dark;
     text-align: center;
+    touch-action: pan-y;
+  }
+  .copy {
+    position: relative;
+    z-index: 2;
+  }
+  .num {
+    margin: 0;
+    font-size: clamp(5rem, 20vw, 9rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.05em;
+    background: var(--brand-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   h1 {
-    margin-top: 1rem;
-    font-size: clamp(2.25rem, 6vw, 3.75rem);
+    margin-top: 0.75rem;
+    font-size: clamp(1.9rem, 5.5vw, 3.25rem);
+    text-wrap: balance;
   }
   .lede {
     margin: 1rem auto 0;
     max-width: 30rem;
     color: var(--muted);
     font-size: 1.1rem;
+    text-wrap: pretty;
   }
-  .lost p:last-child {
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
     margin-top: 2rem;
+  }
+
+  .hidden {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .hidden li {
+    position: absolute;
+    translate: -50% -50%;
+    rotate: var(--r);
+  }
+  .hidden img {
+    display: block;
+    width: clamp(3.5rem, 9vw, 5.5rem);
+    height: auto;
+    border-radius: 22%;
+    box-shadow: 0 0 2.5rem -0.5rem var(--c);
+  }
+  .hidden a {
+    display: block;
+    border-radius: 22%;
+    transition: scale 0.2s;
+  }
+  .hidden a:hover,
+  .hidden a:focus-visible {
+    scale: 1.12;
+  }
+
+  /* With JS and motion, the apps only show inside the light. Otherwise, and while one is
+     keyboard-focused, they stay visible. */
+  .stage[data-live] .hidden:not(:has(:focus-visible)) {
+    mask-image: radial-gradient(circle clamp(7rem, 22vw, 11rem) at var(--x) var(--y), #000 30%, transparent);
+  }
+  .stage[data-live]::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      circle clamp(9rem, 28vw, 15rem) at var(--x) var(--y),
+      color-mix(in srgb, var(--lantern) 26%, transparent),
+      transparent 70%
+    );
   }
 </style>

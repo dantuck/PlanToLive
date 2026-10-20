@@ -8,6 +8,9 @@
   --text: light-dark(#333333, #d3d9e0);
   --muted: light-dark(#5a5a5a, #a3adbb);
   --font: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --lantern: #ffb02e;
+  /* Mirrored in scripts/og.mjs, which renders it into an SVG that can't read CSS variables. */
+  --brand-gradient: linear-gradient(90deg, #ff7a1a, var(--lantern) 45%, #22c55e);
   --radius: 20px;
   --radius-btn: 14px;
   --max: 67.5rem;
