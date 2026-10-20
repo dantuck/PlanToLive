@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
 import Device from './Device.astro';
 
 interface Props {
@@ -22,7 +23,7 @@ const statusLabel = {
   style={`--accent:${app.accent};--btn-fg:${app.accentFg}`}
 >
   <div>
-    <img class="icon" src={app.icon} alt="" width="56" height="56" />
+    <Image class="icon" src={app.icon} alt="" width={112} height={112} />
     <p class="eyebrow status"><span class="dot"></span>{statusLabel[app.status]}</p>
     <h3>{app.name}</h3>
     <p class="tagline">{app.tagline}</p>
@@ -45,7 +46,7 @@ const statusLabel = {
           <Device src={app.screenshot} alt={app.screenshotAlt ?? ''} />
         </div>
       ) : (
-        <img class="mark" src={app.icon} alt="" width="128" height="128" />
+        <Image class="mark" src={app.icon} alt="" width={256} height={256} />
       )
     }
   </div>

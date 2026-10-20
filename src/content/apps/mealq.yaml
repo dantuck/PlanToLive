@@ -9,8 +9,8 @@ accentFg: '#1a1100'
 order: 2
 status: available
 statusNote: Available on Android. iPhone and iPad are coming soon.
-icon: /apps/mealq-icon.webp
-screenshot: /apps/mealq-shot.webp
+icon: ../../assets/apps/mealq-icon.webp
+screenshot: ../../assets/apps/mealq-shot.webp
 screenshotAlt: The mealQ meal planner showing a week of dinners
 links:
   - label: Get it on Google Play

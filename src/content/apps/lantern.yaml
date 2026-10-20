@@ -8,8 +8,8 @@ accent: '#c2570a'
 order: 1
 status: open-source
 statusNote: Free and self-hosted. You run it in your own Cloudflare account, and no one else sees your data.
-icon: /apps/lantern-icon.svg
-screenshot: /apps/lantern-shot.webp
+icon: ../../assets/apps/lantern-icon.svg
+screenshot: ../../assets/apps/lantern-shot.webp
 screenshotAlt: Lantern's chores page with a household goal, family members, and chore filters
 links:
   - label: View on GitHub

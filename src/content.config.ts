@@ -6,7 +6,8 @@ const hex = z.string().regex(/^#[0-9a-f]{6}$/i, 'expected a #rrggbb color');
 
 const apps = defineCollection({
   loader: glob({ pattern: '*.yaml', base: './src/content/apps' }),
-  schema: z.object({
+  schema: ({ image }) =>
+    z.object({
     name: z.string(),
     tagline: z.string(),
     description: z.string(),
@@ -15,8 +16,8 @@ const apps = defineCollection({
     order: z.number(),
     status: z.enum(['available', 'preview', 'open-source']),
     statusNote: z.string(),
-    icon: z.string(),
-    screenshot: z.string().optional(),
+    icon: image(),
+    screenshot: image().optional(),
     screenshotAlt: z.string().optional(),
     links: z.array(
       z.object({

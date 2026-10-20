@@ -1,4 +1,5 @@
 import { readdirSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import sharp from 'sharp';
 import { parse } from 'yaml';
 
@@ -32,7 +33,7 @@ const mask = Buffer.from(
 
 const tiles = await Promise.all(
   apps.map(async (app, i) => ({
-    input: await sharp(`public${app.icon}`, { density: 150 })
+    input: await sharp(resolve('src/content/apps', app.icon), { density: 150 })
       .resize(SIZE, SIZE, { fit: 'cover' })
       .composite([{ input: mask, blend: 'dest-in' }])
       .png()

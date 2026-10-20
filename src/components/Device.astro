@@ -1,6 +1,8 @@
 ---
+import { Image } from 'astro:assets';
+
 interface Props {
-  src: string;
+  src: ImageMetadata;
   alt: string;
 }
 
@@ -8,7 +10,7 @@ const { src, alt } = Astro.props;
 ---
 
 <div class="device">
-  <img src={src} {alt} width="560" height="1217" loading="lazy" decoding="async" />
+  <Image src={src} {alt} widths={[240, 480]} sizes="(min-width: 54rem) 14rem, 60vw" loading="lazy" />
 </div>
 
 <style>

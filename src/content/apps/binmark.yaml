@@ -8,8 +8,8 @@ accent: '#16a34a'
 order: 3
 status: preview
 statusNote: In internal testing on Android and not yet publicly available.
-icon: /apps/binmark-icon.webp
-screenshot: /apps/binmark-shot.webp
+icon: ../../assets/apps/binmark-icon.webp
+screenshot: ../../assets/apps/binmark-shot.webp
 screenshotAlt: A Binmark bin page with a QR label and a list of items
 links:
   - label: Learn more
